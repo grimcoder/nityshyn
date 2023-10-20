@@ -1,0 +1,27 @@
+{
+  "name": "nityshyn-front",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.8.6",
+    "apollo-server-micro": "^3.12.1",
+    "aws-sdk": "^2.1477.0",
+    "graphql": "^16.8.1",
+    "next": "13.5.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.47.0",
+    "react-quill": "^2.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10",
+    "postcss": "^8",
+    "tailwindcss": "^3"
+  }
+}
