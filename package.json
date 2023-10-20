@@ -12,6 +12,7 @@
     "@apollo/client": "^3.8.6",
     "apollo-server-micro": "^3.12.1",
     "aws-sdk": "^2.1477.0",
+    "crypto": "^1.0.1",
     "graphql": "^16.8.1",
     "next": "13.5.5",
     "react": "^18",

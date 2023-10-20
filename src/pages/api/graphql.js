@@ -6,6 +6,18 @@ AWS.config.update({ region: YOUR_AWS_REGION });
 
 const cognito = new AWS.CognitoIdentityServiceProvider();
 
+
+const crypto = require('crypto');
+
+function computeSecretHash(clientId, secretKey, username) {
+    const message = username + clientId;
+    const hmac = crypto.createHmac('sha256', secretKey);
+    hmac.update(message);
+    return hmac.digest('base64');
+}
+
+
+
 const typeDefs = gql`
 
 type Query {
@@ -19,6 +31,7 @@ type Query {
   input RegisterInput {
       email: String!
       password: String!
+      username: String!
   }
 
   type RegisterResponse {
@@ -36,10 +49,23 @@ const resolvers = {
     Mutation: {
         register: async (_, { input }) => {
             try {
+
+                const ClientId = process.env.YOUR_COGNITO_APP_CLIENT_ID;
+                const clientSecret = process.env.COGNITO_APP_CLIENT_SECRET;
+
+                const SecretHash = computeSecretHash(ClientId, clientSecret, input.username);
+
                 const params = {
-                    ClientId: 'YOUR_COGNITO_APP_CLIENT_ID',
-                    Username: input.email,
-                    Password: input.password
+                    ClientId,
+                    Username: input.username,     // use the provided username
+                    Password: input.password,
+                    UserAttributes: [
+                        {
+                            Name: 'email',
+                            Value: input.email  // provide the email as an attribute
+                        }
+                    ],
+                    SecretHash  // if necessary, as mentioned in the previous response
                 };
 
                 const response = await cognito.signUp(params).promise();

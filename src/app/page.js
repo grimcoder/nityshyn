@@ -51,7 +51,7 @@ export default function HomePage() {
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         </Head>
 
-        <div className="bg-white p-8 rounded-lg shadow-md">
+        <div className="p-8 rounded-lg shadow-md">
 
           <h1 className="text-2xl mb-4 font-bold">Welcome to Nityshyn</h1>
 

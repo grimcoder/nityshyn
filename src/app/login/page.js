@@ -12,7 +12,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl mb-4 font-bold">Login</h1>
+        <h1 className="text-blue-500 text-3xl font-bold">Login</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2" htmlFor="email">Email Address</label>
