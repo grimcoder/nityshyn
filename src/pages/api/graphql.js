@@ -43,29 +43,47 @@ type Query {
   type User {
       email: String!
   }
+
+  type Mutation {
+    login(input: LoginInput!): LoginResponse!
+  }
+  
+  input LoginInput {
+    email: String!
+    password: String!
+  }
+  
+  type LoginResponse {
+    success: Boolean!
+    message: String!
+    token: String
+    user: User
+  }
+  
+  
 `;
+
+const ClientId = process.env.YOUR_COGNITO_APP_CLIENT_ID;
+const clientSecret = process.env.COGNITO_APP_CLIENT_SECRET;
 
 const resolvers = {
     Mutation: {
         register: async (_, { input }) => {
             try {
 
-                const ClientId = process.env.YOUR_COGNITO_APP_CLIENT_ID;
-                const clientSecret = process.env.COGNITO_APP_CLIENT_SECRET;
-
                 const SecretHash = computeSecretHash(ClientId, clientSecret, input.username);
 
                 const params = {
                     ClientId,
-                    Username: input.username,     // use the provided username
+                    Username: input.username,
                     Password: input.password,
                     UserAttributes: [
                         {
                             Name: 'email',
-                            Value: input.email  // provide the email as an attribute
+                            Value: input.email 
                         }
                     ],
-                    SecretHash  // if necessary, as mentioned in the previous response
+                    SecretHash  
                 };
 
                 const response = await cognito.signUp(params).promise();
@@ -82,7 +100,37 @@ const resolvers = {
                     message: error.message
                 };
             }
-        }
+        },
+        login: async (_, { input }) => {
+
+            const SECRET_HASH = computeSecretHash(ClientId, clientSecret, input.email);
+
+
+            const params = {
+              AuthFlow: 'USER_PASSWORD_AUTH',
+              ClientId,
+              AuthParameters: {
+                USERNAME: input.email,
+                PASSWORD: input.password,
+                SECRET_HASH
+              },
+            };
+      
+            try {
+              const response = await cognito.initiateAuth(params).promise();
+              return {
+                success: true,
+                message: 'Login successful',
+                token: response.AuthenticationResult.IdToken, // or AccessToken, depending on your needs
+                user: { email: input.email }
+              };
+            } catch (error) {
+              return {
+                success: false,
+                message: error.message
+              };
+            }
+          }
     }
 };
 
