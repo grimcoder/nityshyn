@@ -16,8 +16,6 @@ function computeSecretHash(clientId, secretKey, username) {
     return hmac.digest('base64');
 }
 
-
-
 const typeDefs = gql`
 
 type Query {
@@ -42,6 +40,7 @@ type Query {
 
   type User {
       email: String!
+      username: String!
   }
 
   type Mutation {
@@ -49,7 +48,7 @@ type Query {
   }
   
   input LoginInput {
-    email: String!
+    username: String!
     password: String!
   }
   
@@ -91,7 +90,7 @@ const resolvers = {
                 return {
                     success: true,
                     message: 'Registration successful',
-                    user: { email: response.UserSub }
+                    user: { username: response.username }
                 };
 
             } catch (error) {
@@ -103,14 +102,14 @@ const resolvers = {
         },
         login: async (_, { input }) => {
 
-            const SECRET_HASH = computeSecretHash(ClientId, clientSecret, input.email);
+            const SECRET_HASH = computeSecretHash(ClientId, clientSecret, input.username);
 
 
             const params = {
               AuthFlow: 'USER_PASSWORD_AUTH',
               ClientId,
               AuthParameters: {
-                USERNAME: input.email,
+                USERNAME: input.username,
                 PASSWORD: input.password,
                 SECRET_HASH
               },
@@ -122,7 +121,7 @@ const resolvers = {
                 success: true,
                 message: 'Login successful',
                 token: response.AuthenticationResult.IdToken, // or AccessToken, depending on your needs
-                user: { email: input.email }
+                user: { username: input.username }
               };
             } catch (error) {
               return {

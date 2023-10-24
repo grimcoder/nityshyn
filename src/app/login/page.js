@@ -8,13 +8,13 @@ import client from '../lib/apolloClient';
 
 
 const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+  mutation Login($username: String!, $password: String!) {
+    login(input: { username: $username, password: $password }) {
       success
       message
       token
       user {
-        email
+        username
       }
     }
   }
@@ -29,7 +29,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
-      const { data: loginData } = await login({ variables: { email: data.email, password: data.password } });
+      const { data: loginData } = await login({ variables: { username: data.username, password: data.password } });
       if (loginData.login.success) {
         console.log('Login successful:', loginData);
         // You can navigate the user to another page, store the token, etc.
@@ -47,14 +47,14 @@ export default function LoginPage() {
         <h1 className="text-blue-500 text-3xl font-bold">Login</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2" htmlFor="email">Email Address</label>
+            <label className="block text-sm font-medium mb-2" htmlFor="username">Email Address</label>
             <input 
               {...register('username', { required: 'username is required' })}
               className="w-full p-2 border rounded"
               type="text" 
-              id="email" 
+              id="username" 
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
+            {errors.username && <p className="text-red-600 text-sm mt-1">{errors.username.message}</p>}
           </div>
 
           <div className="mb-4">
