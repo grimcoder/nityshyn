@@ -38,6 +38,30 @@ const resolvers = {
     },
   },
   Mutation: {
+
+    addArticle: async (_, { input })=>{
+      try {
+        const a = 9;
+        // const articles = await query('SELECT * FROM articles WHERE article_id = ?', [article_id]);
+        // return articles[0];
+      } catch (error) {
+        // throw new Error(`Failed to fetch article with ID ${article_id}: ${error.message}`);
+      }
+    },
+
+    editArticle: async (_, { input })=>{
+
+      const update = await query('update articles set author_id = ?, title = ?, content = ?, updated_at = CURRENT_TIMESTAMP() where article_id = ?;', [input.author_id,input.title,input.content,input.article_id])
+      
+      try{
+        return  {success: true}
+      }
+      catch (error){
+        return {success: true, error}
+      }
+      
+    },
+
     register: async (_, { input }) => {
       try {
 

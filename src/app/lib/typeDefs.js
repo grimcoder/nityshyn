@@ -18,8 +18,18 @@ type Query {
   
   type Mutation {
       register(input: RegisterInput!): RegisterResponse!
-  }
+      addArticle(input: ArticleInput): Article
+      editArticle(input: ArticleInput):EditArticleResponse
 
+  }
+  
+  input ArticleInput {
+    article_id: Int
+    title: String!
+    content: String!
+    author_id: Int!
+  }
+  
   input RegisterInput {
       email: String!
       password: String!
@@ -45,7 +55,12 @@ type Query {
     username: String!
     password: String!
   }
-  
+
+  type EditArticleResponse {
+    success: Boolean!
+    message: String
+  }
+
   type LoginResponse {
     success: Boolean!
     message: String!
