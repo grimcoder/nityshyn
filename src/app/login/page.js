@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import client from '../lib/apolloClient';
+import { useState } from 'react';
 
 
 const LOGIN_MUTATION = gql`
@@ -21,6 +22,7 @@ const LOGIN_MUTATION = gql`
 `;
 
 export default function LoginPage() {
+  const [loginError, setLoginError] = useState(undefined);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION ,{
@@ -29,12 +31,13 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
-      const { data: loginData } = await login({ variables: { username: data.username, password: data.password } });
+      const result = await login({ variables: { username: data.username, password: data.password } });
+      const { data: loginData, error } = result;
       if (loginData.login.success) {
         console.log('Login successful:', loginData);
-        // You can navigate the user to another page, store the token, etc.
-      } else {
+        setLoginError(undefined)      } else {
         console.error('Login failed:', loginData.login.message);
+        setLoginError(loginData.login.message)
       }
     } catch (err) {
       console.error('Login error:', err.message);
@@ -66,6 +69,7 @@ export default function LoginPage() {
               id="password"
             />
             {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>}
+            <div className="text-red-600 text-sm mt-1">{loginError}</div>
           </div>
 
           <div className="flex justify-between items-center">

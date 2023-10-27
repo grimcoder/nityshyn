@@ -2,15 +2,16 @@
 import Link from 'next/link'
 import Head from 'next/head'
 import { useQuery, gql } from '@apollo/client';
+import client from '@/app/lib/apolloClient'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 
 export default function HomePage() {
 
-  const client = new ApolloClient({
-    uri: 'http://localhost:4000/graphql',
-    cache: new InMemoryCache()
-  });
+  // const client = new ApolloClient({
+  //   uri: 'http://localhost:4000/graphql',
+  //   cache: new InMemoryCache()
+  // });
 
   const GET_ARTICLES = gql`
     query GetArticles {

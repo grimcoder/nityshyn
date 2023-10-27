@@ -11,7 +11,7 @@ const REGISTER_USER = gql`
       success
       message
       user {
-        email
+        username
       }
     }
   }

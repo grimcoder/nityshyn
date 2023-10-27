@@ -1,150 +1,16 @@
-import { ApolloServer, gql } from 'apollo-server-micro';
-import AWS from 'aws-sdk';
-const YOUR_AWS_REGION = "us-west-1";
+import { startServerAndCreateNextHandler } from '@as-integrations/next';
+import { ApolloServer } from '@apollo/server';
 
-AWS.config.update({ region: YOUR_AWS_REGION });
+import { typeDefs } from '@/app/lib/typeDefs';
+import resolvers from '@/app/lib/resolvers';
 
-const cognito = new AWS.CognitoIdentityServiceProvider();
+const server = new ApolloServer({
+  resolvers,
+  typeDefs,
+});
 
-
-const crypto = require('crypto');
-
-function computeSecretHash(clientId, secretKey, username) {
-    const message = username + clientId;
-    const hmac = crypto.createHmac('sha256', secretKey);
-    hmac.update(message);
-    return hmac.digest('base64');
-}
-
-const typeDefs = gql`
-
-type Query {
-    _empty: String
-  }
-  
-  type Mutation {
-      register(input: RegisterInput!): RegisterResponse!
-  }
-
-  input RegisterInput {
-      email: String!
-      password: String!
-      username: String!
-  }
-
-  type RegisterResponse {
-      success: Boolean!
-      message: String
-      user: User
-  }
-
-  type User {
-      email: String!
-      username: String!
-  }
-
-  type Mutation {
-    login(input: LoginInput!): LoginResponse!
-  }
-  
-  input LoginInput {
-    username: String!
-    password: String!
-  }
-  
-  type LoginResponse {
-    success: Boolean!
-    message: String!
-    token: String
-    user: User
-  }
-  
-  
-`;
-
-const ClientId = process.env.YOUR_COGNITO_APP_CLIENT_ID;
-const clientSecret = process.env.COGNITO_APP_CLIENT_SECRET;
-
-const resolvers = {
-    Mutation: {
-        register: async (_, { input }) => {
-            try {
-
-                const SecretHash = computeSecretHash(ClientId, clientSecret, input.username);
-
-                const params = {
-                    ClientId,
-                    Username: input.username,
-                    Password: input.password,
-                    UserAttributes: [
-                        {
-                            Name: 'email',
-                            Value: input.email 
-                        }
-                    ],
-                    SecretHash  
-                };
-
-                const response = await cognito.signUp(params).promise();
-
-                return {
-                    success: true,
-                    message: 'Registration successful',
-                    user: { username: response.username }
-                };
-
-            } catch (error) {
-                return {
-                    success: false,
-                    message: error.message
-                };
-            }
-        },
-        login: async (_, { input }) => {
-
-            const SECRET_HASH = computeSecretHash(ClientId, clientSecret, input.username);
-
-
-            const params = {
-              AuthFlow: 'USER_PASSWORD_AUTH',
-              ClientId,
-              AuthParameters: {
-                USERNAME: input.username,
-                PASSWORD: input.password,
-                SECRET_HASH
-              },
-            };
-      
-            try {
-              const response = await cognito.initiateAuth(params).promise();
-              return {
-                success: true,
-                message: 'Login successful',
-                token: response.AuthenticationResult.IdToken, // or AccessToken, depending on your needs
-                user: { username: input.username }
-              };
-            } catch (error) {
-              return {
-                success: false,
-                message: error.message
-              };
-            }
-          }
-    }
-};
-
-// ... (other imports and definitions remain the same)
-
-const apolloServer = new ApolloServer({ typeDefs, resolvers });
-
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
-
-// Use Next.js API route handler to start the Apollo Server and create the handler
-export default async (req, res) => {
-  await apolloServer.start();
-  return apolloServer.createHandler({ path: '/api/graphql' })(req, res);
-};
+export default startServerAndCreateNextHandler(server, {
+  context: async (req, res) => { 
+    // console.log(req.body)
+  },
+});
