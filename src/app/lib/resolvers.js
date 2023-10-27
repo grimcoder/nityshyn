@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 const YOUR_AWS_REGION = "us-west-1";
 
 AWS.config.update({ region: YOUR_AWS_REGION });
-
+import query from './db'; 
 const cognito = new AWS.CognitoIdentityServiceProvider();
 
 

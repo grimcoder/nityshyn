@@ -1,7 +1,4 @@
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-
-// If you have an Apollo Server setup somewhere, replace this URL.
-// In production, this might be an environment variable.
 const API_URL = 'http://localhost:3000/api/graphql';
 
 const httpLink = new HttpLink({

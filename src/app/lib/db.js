@@ -7,7 +7,7 @@ const pool = mysql.createPool({
   database: 'nityshyn'
 });
 
-export async function query(sql, params) {
+export default async function query(sql, params) {
   const [results] = await pool.execute(sql, params);
   return results;
 }

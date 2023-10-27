@@ -8,16 +8,12 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 export default function HomePage() {
 
-  // const client = new ApolloClient({
-  //   uri: 'http://localhost:4000/graphql',
-  //   cache: new InMemoryCache()
-  // });
-
   const GET_ARTICLES = gql`
     query GetArticles {
       articles {
-        id
-        title      
+        article_id
+        title
+        content      
       }
     }
   `;
@@ -36,7 +32,11 @@ export default function HomePage() {
       <div>
         {data.articles.map(article => (
           <div key={article.id}>
-            <h2>{article.title}</h2>
+            <div>
+              <Link href={`/view?id=${article.article_id}`} >
+                {article.title}
+              </Link>
+              </div>
           </div>
         ))}
       </div>

@@ -5,7 +5,7 @@ import client from '../lib/apolloClient';
 
 
 const GET_ARTICLE_DETAILS = gql`
-  query GetArticle($id: Int!) {
+  query GetArticle($id: ID!) {
     article(article_id: $id) {
       title
       content
